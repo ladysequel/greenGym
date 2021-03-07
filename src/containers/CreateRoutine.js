@@ -1,9 +1,8 @@
 import "../styles/Buttons.css"
 import "../styles/Form.css"
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { WorkoutCollectionContext } from "../HOC";
 import { Link } from "react-router-dom"
-
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faTimes, faClock, faRunning } from "@fortawesome/free-solid-svg-icons";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -11,26 +10,36 @@ library.add(faPlus, faTimes, faClock, faRunning);
 
 export default function CreateRoutine(props) {
 
-    const [collectionWorkout, setCollectionWorkout] = useState([]);
+    const [state, dispatch] = useContext(WorkoutCollectionContext);
     const [workout, setWorkout] = useState({ name: "", time: 0, reps: 0 })
+    const [data, setData] = useState();
+
+    console.log(state);
+    useEffect(() => {
+        fetch("https://wger.de/api/v2/exercise/")
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    setData(result.results)
+                },
+                (error) => {
+                    console.log("error")
+                }
+            )
+    }, []);
+
 
     function addWorkout(event) {
-        setCollectionWorkout([...collectionWorkout, workout])
+        dispatch({
+            type: "ADD_WORKOUT",
+            payload: workout
+        });
         setWorkout({ name: "", time: 0, reps: 0 });
 
     }
 
-    function deleteWorkout(idx) {
-        let result = collectionWorkout.filter((element, index) => index !== idx);
-        setCollectionWorkout(result);
-    }
-
     function validation() {
         return workout.name !== "" && workout.time !== 0 && workout.reps > 0
-    }
-
-    function saveFile() {
-
     }
 
     return (
@@ -42,9 +51,9 @@ export default function CreateRoutine(props) {
                 </div>
                 <Link
                     to="/perform-routine"
-                    className={collectionWorkout.length > 0 ?
-                        "w-1/2 bg-green-500 text-white rounded py-2 text-center my-2"
-                        : "w-1/2 bg-gray-500 text-white rounded py-2 text-center my-2"}
+                    className={state.collectionWorkout.length > 0 ?
+                        "w-1/2 bg-green-500 text-white rounded py-2 text-center my-2 md:ml-auto"
+                        : "w-1/2 bg-gray-500 text-white rounded py-2 text-center my-2 md:ml-auto"}
 
                     style={{ maxWidth: "300px" }}>
                     Start<FontAwesomeIcon icon={faRunning} className="ml-2"></FontAwesomeIcon>
@@ -56,16 +65,21 @@ export default function CreateRoutine(props) {
                     <form className="bg-gray-800 text-white p-4 my-2 rounded md:mx-auto " style={{ maxWidth: "350px" }}>
                         <div>
                             <label className="FormFieldLabel" htmlFor="name">Workout *</label>
-                            <input
+                            <select
                                 className="FormField"
                                 id="name" type="text"
                                 value={workout.name}
                                 onChange={(event) => {
-
                                     setWorkout({ ...workout, name: event.target.value })
                                 }}
                                 required>
-                            </input>
+                                <option>Select exercise</option>
+                                {
+                                    data && data.map((element, idx) => {
+                                        return (<option key={idx} value={element.name}>{element.name}</option>)
+                                    })
+                                }
+                            </select>
                         </div>
                         <div className="md:flex block">
                             <div className="md:w-1/2 mr-1">
@@ -114,7 +128,7 @@ export default function CreateRoutine(props) {
                 </div>
                 <div className="lg:w-1/2 md:w-2/3 w-full md:mx-auto md:mt-3">
                     <h2 className="font-bold">Summary</h2>
-                    {collectionWorkout && collectionWorkout.map((element, idx) => {
+                    {state.collectionWorkout && state.collectionWorkout.map((element, idx) => {
                         return (
                             <div key={idx} className="flex p-3 rounded bg-gray-200 my-4">
                                 <div className="w-3/4 py-2">
@@ -126,7 +140,10 @@ export default function CreateRoutine(props) {
 
                                 <div className="w-1/4 text-right">
                                     <button className="py-2 px-4 text-white rounded-full bg-red-500 ml-auto list-item"
-                                        onClick={() => deleteWorkout(idx)}>
+                                        onClick={() => dispatch({
+                                            type: "DEL_WORKOUT",
+                                            payload: idx
+                                        })}>
                                         <FontAwesomeIcon icon={faTimes} ></FontAwesomeIcon>
                                     </button>
                                 </div>
