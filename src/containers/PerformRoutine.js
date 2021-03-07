@@ -1,8 +1,6 @@
 import "../styles/styles.css"
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from "react-router-dom"
-import { WorkoutCollectionContext } from "../HOC";
-
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,37 +11,35 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 library.add(faPlus, faChevronRight, faClock, faRedo, faCheckCircle);
 
 export default function PerformRoutine(props) {
-
-
-    const [state, dispatch] = useContext(WorkoutCollectionContext);
-    const [counter, setCounter] = useState(state.collectionWorkout[0].time);
+    const [collectionWorkout, setCollectionWorkout] = useState(JSON.parse(localStorage.getItem("workouts")));
+    const [counter, setCounter] = useState(collectionWorkout[0].time);
     const [pointer, setPointer] = useState(0);
-
+    const [percentage, setPercentage] = useState(0);
 
     useEffect(() => {
-        if (pointer < state.collectionWorkout.length) {
+        if (pointer < collectionWorkout.length) {
             if (counter > 0) {
                 setTimeout(() => setCounter(counter - 1), 1000);
             } else {
                 setPointer(pointer + 1);
-                setCounter(state.collectionWorkout[pointer].time);
+                if (collectionWorkout[pointer + 1]) {
+                    setCounter(collectionWorkout[pointer + 1].time);
+                }
             }
         }
-
         return () => {
-
-        };
+        }
     }, [counter]);
 
     return (
         <>
             {
-                pointer < state.collectionWorkout.length ? (
+                pointer < collectionWorkout.length ? (
                     <div className="overflow-hidden overflow-y-auto" style={{ height: "80vh" }}>
                         <div className="bg-gray-200 p-4 mt-4 flex">
-                            <h1>{state.collectionWorkout[pointer].name}</h1>
+                            <h1>{collectionWorkout[pointer].name}</h1>
                             <div className="ml-auto">
-                                <p className="font-bold text-sm text-right">Target Reps: {state.collectionWorkout[pointer].reps}</p>
+                                <p className="font-bold text-sm text-right">Target Reps: {collectionWorkout[pointer].reps}</p>
                             </div>
 
                         </div>
@@ -52,8 +48,9 @@ export default function PerformRoutine(props) {
                             <div className="lg:w-2/3 lg:mr-2 flex relative">
                                 <img src="workoutOne.gif" className="w-full rounded my-4"></img>
                                 <div className="md:w-36 w-24 px-2 py-4 mx-auto absolute right-0">
+
                                     <CircularProgressbar
-                                        value={(counter / state.collectionWorkout[pointer].time) * 100}
+                                        value={(counter / collectionWorkout[pointer].time) * 100}
                                         text={`${counter}`}
                                         background
                                         backgroundPadding={6}
@@ -70,7 +67,7 @@ export default function PerformRoutine(props) {
 
                             </div>
                             <ul className="lg:w-1/3 my-4">
-                                {state.collectionWorkout && state.collectionWorkout.map((element, idx) => {
+                                {collectionWorkout && collectionWorkout.map((element, idx) => {
                                     return (
                                         <li key={idx} className=" bg-gray-900 p-4 border border-gray-200 flex rounded text-white">
                                             <h2 className="w-1/2 mb-2 my-auto">{element.name}</h2>

@@ -25,6 +25,9 @@ export default function CreateRoutine(props) {
                 }
             )
 
+        dispatch({
+            type: "WORKOUT_COMPLETED"
+        });
         return () => {
 
         };
