@@ -7,20 +7,29 @@ import NavBar from "./parts/navBar.js";
 export const WorkoutCollectionContext = React.createContext([]);
 
 const initialState = {
-  collectionWorkout: []
+  collectionWorkout: JSON.parse(localStorage.getItem("workouts")) ? JSON.parse(localStorage.getItem("workouts")) : []
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
     case "ADD_WORKOUT":
+      localStorage.setItem("workouts", JSON.stringify([...state.collectionWorkout, action.payload]));
       return {
         collectionWorkout: [...state.collectionWorkout, action.payload]
       };
     case "DEL_WORKOUT":
+      let result = state.collectionWorkout.filter(
+        (element, index) => index !== action.payload
+      )
+      localStorage.setItem("workouts", JSON.stringify(result));
+
       return {
-        collectionWorkout: state.collectionWorkout.filter(
-          (element, index) => index !== action.payload
-        )
+        collectionWorkout: result
+      };
+    case "WORKOUT_COMPLETED":
+      localStorage.clear();
+      return {
+        collectionWorkout: []
       };
   }
 };
@@ -28,12 +37,13 @@ const reducer = (state, action) => {
 export default (WrappedComponent) => {
   const HOC = (props) => {
     const [state, dispatch] = useReducer(reducer, initialState);
+
     return (
       <div>
-        <Header />
+        <Header style={{ minHeight: "10vh" }} />
         <main className="md:flex block" >
-          <NavBar />
-          <div className="p-4 md:p-6 md:w-full overflow-hidden overflow-y-auto" style={{ minHeight: "80vh" }}>
+          <NavBar style={{ minHeight: "10vh" }} />
+          <div className="p-4 md:p-6 md:w-full" style={{ minHeight: "70vh" }}>
             <WorkoutCollectionContext.Provider value={[state, dispatch]}>
               <WrappedComponent {...props} />
             </WorkoutCollectionContext.Provider>

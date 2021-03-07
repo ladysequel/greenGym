@@ -8,16 +8,16 @@ library.add(faPlus);
 
 function Home(props) {
     return (
-        <div>
-            <div className="flex" >
-                <div>
+        <div className="overflow-hidden overflow-y-auto pb-2" style={{ height: "80vh" }}>
+            <div className="flex md:border-b md:border-grey-200 pb-2 md:mb-4" >
+                <div className="my-auto">
                     <h1 className="my-auto font-bold text-lg">Hello, Grace</h1>
                     <p className="text-sm">Your last workout recorded on 14/01/21</p>
                 </div>
                 <div className="bg-green-500 text-white rounded w-48 ml-auto my-4">
                     <Link to="/create-routine" className="flex px-4 py-2 place-content-center">
                         <p className="my-auto">Create Routine</p>
-                        <FontAwesomeIcon icon={faPlus} size="2x" className="mx-2"></FontAwesomeIcon>
+                        <FontAwesomeIcon icon={faPlus} size="2x" className="mx-2 my-auto"></FontAwesomeIcon>
                     </Link>
                 </div>
             </div>
