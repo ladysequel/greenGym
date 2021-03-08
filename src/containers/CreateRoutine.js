@@ -109,7 +109,7 @@ export default function CreateRoutine(props) {
                                     </select>
                                 </div>
                                 <div className="md:w-1/2 ml-1">
-                                    <label className="FormFieldLabel" htmlFor="reps">Reps *</label>
+                                    <label className="FormFieldLabel" htmlFor="reps">Target Reps *</label>
                                     <input
                                         className="FormField"
                                         id="reps" type="number"
@@ -148,7 +148,7 @@ export default function CreateRoutine(props) {
                                     </div>
 
                                     <div className="w-1/4 text-right my-auto">
-                                        <button className="py-2 px-4 text-white rounded-full bg-red-500 ml-auto list-item"
+                                        <button className="greenGymButton py-2 px-4 text-white rounded bg-red-500 ml-auto list-item"
                                             onClick={() => dispatch({
                                                 type: "DEL_WORKOUT",
                                                 payload: idx

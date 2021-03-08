@@ -14,7 +14,6 @@ export default function PerformRoutine(props) {
     const [collectionWorkout, setCollectionWorkout] = useState(JSON.parse(localStorage.getItem("workouts")));
     const [counter, setCounter] = useState(collectionWorkout[0].time);
     const [pointer, setPointer] = useState(0);
-    const [percentage, setPercentage] = useState(0);
 
     useEffect(() => {
         if (pointer < collectionWorkout.length) {
@@ -69,7 +68,7 @@ export default function PerformRoutine(props) {
                             <ul className="lg:w-1/3 my-4">
                                 {collectionWorkout && collectionWorkout.map((element, idx) => {
                                     return (
-                                        <li key={idx} className=" bg-gray-900 p-4 border border-gray-200 flex rounded text-white">
+                                        <li key={idx} className={pointer === idx ? "bg-green-500 p-4 border border-gray-200 flex rounded text-black" : "bg-gray-900 p-4 border border-gray-200 flex rounded text-white"}>
                                             <h2 className="w-1/2 mb-2 my-auto">{element.name}</h2>
                                             <p className="w-1/4 my-auto mx-2">
                                                 <FontAwesomeIcon icon={faClock} className="mr-2"></FontAwesomeIcon>
